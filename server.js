@@ -20,6 +20,21 @@ app.get('/', (request, response) => {
   response.sendFile( __dirname + "/" + "index.html" )
 })
 
+app.get('/api/v1/items', (request, response) => {
+  database('items').select()
+  .then((items)=> {
+    if (items.length < 1) {
+      response.status(404).send({ error: 'item does not exist1' })
+    }
+    response.status(200).json(items)
+  })
+  .catch(function(error) {
+    console.error('something is wrong with displaying all items');
+    console.log(error);
+    response.status(404)
+  });
+})
+
 
 if (!module.parent) {
   app.listen(app.get('port'), () => {
