@@ -35,6 +35,52 @@ app.get('/api/v1/items', (request, response) => {
   });
 })
 
+app.get('/api/v1/items/:id', (request, response) => {
+  database('items').where('id', request.params.id).select()
+  .then(function(items) {
+          if (items.length < 1) {
+            res.status(404).send({ error: 'items does not exist' })
+          }
+            response.status(200).json(items);
+          })
+          .catch(function(error) {
+            console.error(error)
+            response.status(404)
+          });
+})
+
+app.post('/api/v1/items', (request, response) => {
+  const { id, name, reason, cleanliness } = request.body
+  const created_at = new Date
+  const items = {id, name, reason, cleanliness, created_at}
+  database('items').insert(items)
+        .then(() => {
+          database('items').select()
+          .then((items) => {
+            response.status(200).json(items)
+          })
+        })
+      .catch((error) => {
+        response.status(404).send(error)
+      })
+});
+
+app.patch('/api/v1/items/:id', (request, response) => {
+  const { id } = request.params
+  const { name, reason, cleanliness } = request.body
+  const created_at = new Date
+  const items = {name, reason, cleanliness, created_at}
+  database('items').where('id', id).select().update(items)
+        .then(() => {
+          database('items').select()
+          .then((items) => {
+            response.status(200).json(items)
+          })
+        })
+      .catch((error) => {
+        response.status(404).send(error)
+      })
+});
 
 if (!module.parent) {
   app.listen(app.get('port'), () => {
