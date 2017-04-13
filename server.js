@@ -55,9 +55,9 @@ app.get('/api/v1/items/:id', (request, response) => {
 })
 
 app.post('/api/v1/items', (request, response) => {
-  const { id, name, reason, cleanliness } = request.body
+  const { name, reason, cleanliness } = request.body
   const created_at = new Date
-  const items = {id, name, reason, cleanliness, created_at}
+  const items = {name, reason, cleanliness, created_at}
   database('items').insert(items)
         .then(() => {
           database('items').select()
